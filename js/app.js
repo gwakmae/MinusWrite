@@ -99,6 +99,12 @@ MinusBook.App = (() => {
         const remaining = loss - t.total;
         const pureRemaining = loss - t.recover;
 
+        const rateText = MinusBook.Rate.fmtRate();
+
+        const rateRow = rateText
+            ? statusRow("오늘 환율", rateText, "")
+            : "";
+
         return (
             '<section class="panel">' +
                 '<h2 class="panel-title">손실 복구 현황</h2>' +
@@ -114,7 +120,8 @@ MinusBook.App = (() => {
                     ) +
                     statusRow(
                         "남은 손실",
-                        Calc.remainingText(pureRemaining),
+                        Calc.remainingText(pureRemaining) +
+                            krwSub(pureRemaining),
                         Calc.remainingClass(pureRemaining)
                     ) +
                     statusRow(
@@ -140,9 +147,14 @@ MinusBook.App = (() => {
                     ) +
                     statusRow(
                         "실제 남은 손실",
-                        Calc.remainingText(remaining),
+                        Calc.remainingText(remaining) +
+                            krwSub(remaining),
                         Calc.remainingClass(remaining)
                     ) +
+                '</div>' +
+
+                '<div class="status-group">' +
+                    rateRow +
                 '</div>' +
 
                 '<div class="progress-track">' +
@@ -153,10 +165,24 @@ MinusBook.App = (() => {
                     '<span>복구율 ' + pct + '%</span>' +
                     '<span>손실금액 ' +
                         Calc.usd(loss) +
+                        (rateText
+                            ? " (" + MinusBook.Rate.fmtKrw(loss) + ")"
+                            : "") +
                     '</span>' +
                 '</div>' +
             '</section>'
         );
+    }
+
+    /* 원화 환산 보조 줄 */
+    function krwSub(usdAmount) {
+        const text = MinusBook.Rate.fmtKrw(Math.abs(usdAmount));
+
+        if (!text) {
+            return "";
+        }
+
+        return '<span class="krw-sub">' + text + '</span>';
     }
 
     function statusRow(label, value, cls) {
@@ -376,7 +402,10 @@ MinusBook.App = (() => {
                 "기록을 불러오는 중입니다..." +
             '</div>';
 
-        await Data.load();
+        await Promise.all([
+            Data.load(),
+            MinusBook.Rate.load()
+        ]);
 
         renderSyncBadge();
 

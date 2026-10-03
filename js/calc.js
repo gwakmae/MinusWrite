@@ -160,11 +160,65 @@ MinusBook.Calc = (() => {
         return remaining > 0 ? "negative" : "done";
     }
 
+    /* 약수 목록 (오름차순). 220 → [1,2,4,5,10,11,20,22,44,55,110,220] */
+    function divisors(n) {
+        const small = [];
+        const large = [];
+
+        for (let i = 1; i * i <= n; i++) {
+            if (n % i === 0) {
+                small.push(i);
+
+                if (i * i !== n) {
+                    large.unshift(n / i);
+                }
+            }
+        }
+
+        return small.concat(large);
+    }
+
+    /* 복구 시나리오
+
+       남은 손실(달러)을 정수로 반올림한 뒤 약수를 구해서
+       "매일 $X × N일" 조합을 만든다. X·N은 항상 정수다.
+       그중 무작위로 count개를 뽑아 기간순으로 돌려준다.
+       — 새로고침할 때마다 다른 조합이 나온다 */
+    function scenarios(remaining, count) {
+        const target = Math.round(remaining);
+
+        if (target <= 0) {
+            return { target: target, list: [] };
+        }
+
+        /* 기간은 1~365일, 하루 $1 이상인 조합만 */
+        const pool = divisors(target)
+            .filter(d => d <= 365 && target / d >= 1)
+            .map(d => ({ days: d, daily: target / d }));
+
+        /* Fisher-Yates 셔플 */
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = pool[i];
+
+            pool[i] = pool[j];
+            pool[j] = tmp;
+        }
+
+        const list = pool
+            .slice(0, count || 6)
+            .sort((a, b) => a.days - b.days);
+
+        return { target: target, list: list };
+    }
+
     return Object.freeze({
         day,
         totals,
         month,
         progress,
+        divisors,
+        scenarios,
         dateKey,
         parseKey,
         weekdayName,

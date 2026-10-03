@@ -595,3 +595,97 @@
     font-size: 12px;
     font-weight: 700;
 }
+
+/* ======================================================
+   복구 시나리오 / 원화 환산
+   ====================================================== */
+
+.scenario-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 4px;
+}
+
+.scenario-head .panel-title {
+    margin-bottom: 0;
+}
+
+.scenario-refresh {
+    padding: 8px 14px;
+
+    color: var(--blue);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: pointer;
+
+    transition: 160ms var(--ease);
+}
+
+.scenario-refresh:active {
+    background: var(--surface-3);
+    transform: scale(0.94);
+}
+
+.scenario-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    margin-top: 14px;
+}
+
+.scenario-card {
+    padding: 16px 12px;
+
+    background: var(--surface-2);
+    border-radius: 14px;
+
+    text-align: center;
+}
+
+.scenario-card .daily {
+    display: block;
+
+    color: var(--blue);
+    font-size: 18px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.scenario-card .days {
+    display: block;
+    margin-top: 6px;
+
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.scenario-card .done-date {
+    display: block;
+    margin-top: 2px;
+
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* 금액 아래 붙는 원화 환산 */
+
+.krw-sub {
+    display: block;
+    margin-top: 2px;
+
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 600;
+}
