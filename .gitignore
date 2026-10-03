@@ -1,0 +1,20 @@
+# 운영체제 파일
+*.DS_Store
+Thumbs.db
+# IDE/에디터 설정
+.vscode/
+*.swp
+.idea/
+# 언어/프레임워크 (JS/웹 환경 가정)
+node_modules/
+dist/
+build/
+coverage/
+# 빌드/의존성
+npm-debug.log
+yarn-error.log
+*.log
+# 로그/임시 파일
+tmp/
+*.tmp
+temp/

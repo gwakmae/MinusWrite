@@ -1,0 +1,597 @@
+/* ======================================================
+   공통 카드·패널
+   ====================================================== */
+
+.panel {
+    padding: 24px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.panel + .panel {
+    margin-top: 16px;
+}
+
+.panel-title {
+    margin-bottom: 16px;
+    color: var(--text-3);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+/* ======================================================
+   날짜 헤더 (일별 입력)
+   ====================================================== */
+
+.day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.day-nav-btn {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--blue);
+    background: var(--surface-2);
+
+    border: 1px solid var(--border);
+    border-radius: 50%;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    transition: 160ms var(--ease);
+}
+
+.day-nav-btn:active {
+    background: var(--surface-3);
+    transform: scale(0.94);
+}
+
+.day-title {
+    text-align: center;
+}
+
+.day-title .date {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.day-title .weekday {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-3);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.day-title .weekday.sat {
+    color: var(--blue);
+}
+
+.day-title .weekday.sun {
+    color: var(--red);
+}
+
+.today-pill {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 10px;
+
+    color: var(--blue);
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ======================================================
+   입력 필드
+   ====================================================== */
+
+.field {
+    margin-bottom: 20px;
+}
+
+.field > label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--text-2);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.money-input-wrap {
+    position: relative;
+}
+
+.money-input-wrap input {
+    width: 100%;
+    padding: 18px 18px 18px 44px;
+
+    color: var(--text);
+    background: var(--surface-2);
+
+    border: 1px solid transparent;
+    border-radius: 14px;
+
+    font: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: right;
+
+    transition: 160ms var(--ease);
+}
+
+.money-input-wrap input::placeholder {
+    color: var(--text-3);
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.money-input-wrap input:focus {
+    outline: none;
+    background: var(--surface);
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+}
+
+.money-input-wrap .won {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    color: var(--text-3);
+    font-size: 17px;
+    font-weight: 700;
+
+    pointer-events: none;
+}
+
+/* ======================================================
+   실시간 계산 미리보기
+   ====================================================== */
+
+.calc-preview {
+    margin: 24px 0;
+    padding: 20px;
+
+    background: var(--surface-2);
+    border-radius: 16px;
+
+    display: grid;
+    gap: 10px;
+}
+
+.calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: var(--text-2);
+    font-size: 15px;
+}
+
+.calc-row .value {
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.calc-row.rebate .value {
+    color: var(--purple);
+}
+
+.calc-row.applied .value {
+    color: var(--cyan);
+}
+
+.calc-row.net {
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-strong);
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.calc-row.net .value {
+    font-size: 20px;
+}
+
+.calc-row.balance .value.negative {
+    color: var(--red);
+}
+
+.calc-row.balance .value.done {
+    color: var(--green);
+}
+
+/* ======================================================
+   버튼
+   ====================================================== */
+
+.action-button {
+    width: 100%;
+    padding: 18px;
+
+    color: white;
+
+    background: var(--blue);
+
+    border: 0;
+    border-radius: 14px;
+
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+
+    transition: 160ms var(--ease);
+    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
+}
+
+.action-button:active {
+    transform: scale(0.98);
+    background: #0066d6;
+}
+
+.action-button:disabled {
+    opacity: 0.5;
+    transform: none;
+}
+
+.action-button.secondary {
+    color: var(--blue);
+    background: rgba(0, 122, 255, 0.1);
+    box-shadow: none;
+}
+
+.action-button.secondary:active {
+    background: rgba(0, 122, 255, 0.18);
+}
+
+.action-button.danger {
+    color: var(--red);
+    background: rgba(255, 59, 48, 0.1);
+    box-shadow: none;
+}
+
+.button-row {
+    display: grid;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.button-row.two {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* 입금 입력 직후의 저장 버튼 */
+
+.button-row.form-actions {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* ======================================================
+   월별 뷰
+   ====================================================== */
+
+.month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 16px;
+}
+
+.month-nav .day-nav-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+}
+
+.month-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    padding: 16px 18px;
+
+    background: var(--surface-2);
+    border-radius: 14px;
+}
+
+.summary-card .label {
+    display: block;
+    margin-bottom: 6px;
+
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.summary-card .amount {
+    font-size: 19px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.summary-card.income .amount {
+    color: var(--blue);
+}
+
+.summary-card.rebate .amount {
+    color: var(--purple);
+}
+
+.summary-card.net {
+    grid-column: 1 / -1;
+    background: rgba(52, 199, 89, 0.1);
+}
+
+.summary-card.net .amount {
+    color: #248a3d;
+    font-size: 24px;
+}
+
+.day-list {
+    display: grid;
+    gap: 8px;
+}
+
+.day-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px 16px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition: 140ms var(--ease);
+}
+
+.day-row:active {
+    transform: scale(0.99);
+    background: var(--surface-2);
+}
+
+.day-row.today {
+    border-color: rgba(0, 122, 255, 0.5);
+    background: rgba(0, 122, 255, 0.04);
+}
+
+.day-row.empty {
+    border-style: dashed;
+    background: transparent;
+}
+
+.day-row .date-cell {
+    flex: 0 0 64px;
+}
+
+.day-row .date-cell .d {
+    display: block;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.day-row .date-cell .w {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-3);
+}
+
+.day-row .date-cell .w.sat {
+    color: var(--blue);
+}
+
+.day-row .date-cell .w.sun {
+    color: var(--red);
+}
+
+.day-row .income-cell {
+    flex: 1;
+    min-width: 0;
+
+    color: var(--text-3);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.day-row .income-cell .nums {
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+.day-row .net-cell {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--red);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.day-row .net-cell.missing {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.day-row .net-cell.done {
+    color: #248a3d;
+}
+
+/* ======================================================
+   설정 뷰
+   ====================================================== */
+
+.settings-field input {
+    width: 100%;
+    padding: 16px 18px;
+
+    color: var(--text);
+    background: var(--surface-2);
+
+    border: 1px solid transparent;
+    border-radius: 14px;
+
+    font: inherit;
+    font-size: 16px;
+}
+
+.settings-field input:focus {
+    outline: none;
+    background: var(--surface);
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+}
+
+.field-hint {
+    margin: 10px 0 0;
+    color: var(--text-3);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.field-hint a {
+    color: var(--blue);
+}
+
+/* ======================================================
+   로딩 / 빈 상태
+   ====================================================== */
+
+.loading-state {
+    padding: 80px 24px;
+
+    color: var(--text-3);
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* ======================================================
+   마이너스 통장 전용
+   ====================================================== */
+
+/* 메모 텍스트 입력 */
+
+.money-input-wrap input.text-input {
+    padding-right: 18px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+/* 상환 현황 패널 */
+
+.status-group {
+    margin-bottom: 18px;
+}
+
+.status-group-title {
+    margin-bottom: 6px;
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 5px 0;
+
+    color: var(--text-2);
+    font-size: 15px;
+}
+
+.status-row .value {
+    color: var(--text);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.status-row .value.negative {
+    color: var(--red);
+}
+
+.status-row .value.done {
+    color: var(--green);
+}
+
+.status-row .value.rebate {
+    color: var(--purple);
+}
+
+/* 상환 진행 바 */
+
+.progress-track {
+    height: 12px;
+    margin-top: 4px;
+
+    background: var(--surface-3);
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    border-radius: 999px;
+
+    transition: width 400ms var(--ease);
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 6px;
+
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 700;
+}
