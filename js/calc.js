@@ -178,38 +178,51 @@ MinusBook.Calc = (() => {
         return small.concat(large);
     }
 
-    /* 복구 시나리오
+    /* 복구 시나리오 목표 후보들
 
-       남은 손실(달러)을 정수로 반올림한 뒤 약수를 구해서
-       "매일 $X × N일" 조합을 만든다. X·N은 항상 정수다.
-       그중 무작위로 count개를 뽑아 기간순으로 돌려준다.
-       — 새로고침할 때마다 다른 조합이 나온다 */
-    function scenarios(remaining, count) {
-        const target = Math.round(remaining);
+       남은 손실이 $225.73처럼 소수거나, 226처럼 약수가 적은
+       수면 현실적인 계획이 안 나온다. 그래서
+         1) 반올림한 정수를 첫 후보로 두고
+         2) 주변(±5% 또는 ±30)에서 약수가 많은 정수들을
+            찾아 추가 후보로 제시한다.
+       새로고침할 때마다 다음 후보를 보여주는 방식으로 쓴다 */
+    function scenarioTargets(remaining) {
+        const base = Math.max(1, Math.round(remaining));
+        const span = Math.max(30, Math.round(base * 0.05));
 
-        if (target <= 0) {
-            return { target: target, list: [] };
+        const scored = [];
+
+        for (
+            let n = Math.max(1, base - span);
+            n <= base + span;
+            n++
+        ) {
+            const count = divisors(n)
+                .filter(d => d <= 365 && n / d >= 1)
+                .length;
+
+            scored.push({ n: n, count: count });
         }
 
-        /* 기간은 1~365일, 하루 $1 이상인 조합만 */
-        const pool = divisors(target)
+        /* 기본 목표를 제외하고 약수 많은 순 + 가까운 순 */
+        const rest = scored
+            .filter(s => s.n !== base)
+            .sort((a, b) =>
+                b.count - a.count ||
+                Math.abs(a.n - base) - Math.abs(b.n - base)
+            );
+
+        return [base].concat(rest.slice(0, 9).map(s => s.n));
+    }
+
+    /* 목표 금액의 약수 조합 전부 (기간 오름차순)
+
+       "매일 $X × N일" — X·N은 항상 정수다 */
+    function scenarioPlans(target) {
+        return divisors(target)
             .filter(d => d <= 365 && target / d >= 1)
-            .map(d => ({ days: d, daily: target / d }));
-
-        /* Fisher-Yates 셔플 */
-        for (let i = pool.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const tmp = pool[i];
-
-            pool[i] = pool[j];
-            pool[j] = tmp;
-        }
-
-        const list = pool
-            .slice(0, count || 6)
+            .map(d => ({ days: d, daily: target / d }))
             .sort((a, b) => a.days - b.days);
-
-        return { target: target, list: list };
     }
 
     return Object.freeze({
@@ -218,7 +231,8 @@ MinusBook.Calc = (() => {
         month,
         progress,
         divisors,
-        scenarios,
+        scenarioTargets,
+        scenarioPlans,
         dateKey,
         parseKey,
         weekdayName,

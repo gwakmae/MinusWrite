@@ -216,6 +216,8 @@ MinusBook.App = (() => {
             MinusBook.DayView.render(main);
         } else if (viewName === "month") {
             MinusBook.MonthView.render(main);
+        } else if (viewName === "scenario") {
+            MinusBook.ScenarioView.render(main);
         } else if (viewName === "settings") {
             renderSettings(main);
         }

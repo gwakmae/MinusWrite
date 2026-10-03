@@ -689,3 +689,16 @@
     font-size: 12px;
     font-weight: 600;
 }
+
+.scenario-badge {
+    display: inline-block;
+    margin: 8px 0 4px;
+    padding: 4px 12px;
+
+    color: var(--blue);
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 800;
+}

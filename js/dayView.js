@@ -10,9 +10,6 @@ window.MinusBook = window.MinusBook || {};
      리베이트 제외/포함 두 가지 남은 손실이 계산된다
    - 모든 주요 금액 아래에 실시간 환율로 환산한
      원화 금액이 함께 표시된다
-   - 복구 시나리오 패널: 남은 손실의 약수로
-     "매일 $X × N일" 조합을 보여주고,
-     새로고침 버튼으로 다시 뽑는다
    ====================================================== */
 
 MinusBook.DayView = (() => {
@@ -55,90 +52,6 @@ MinusBook.DayView = (() => {
         }
 
         return '<span class="krw-sub">' + text + '</span>';
-    }
-
-    /* ==================================================
-       복구 시나리오 패널
-       ================================================== */
-
-    function scenarioHtml() {
-        const state = Data.getState();
-        const loss = Data.getLossAmount();
-        const t = Calc.totals(state.entries, null);
-        const remaining = loss - t.total;
-
-        if (remaining <= 0) {
-            return (
-                '<section class="panel" id="scenario-panel">' +
-                    '<h2 class="panel-title">🎯 복구 시나리오</h2>' +
-                    '<p class="field-hint">' +
-                        "손실을 전부 복구했습니다. 🎉" +
-                    '</p>' +
-                '</section>'
-            );
-        }
-
-        const s = Calc.scenarios(remaining, 6);
-
-        let cards = "";
-
-        s.list.forEach(item => {
-            const done = new Date();
-
-            done.setDate(done.getDate() + item.days);
-
-            cards +=
-                '<div class="scenario-card">' +
-                    '<span class="daily">' +
-                        "매일 " + Calc.usd(item.daily) +
-                        krwSub(item.daily) +
-                    '</span>' +
-                    '<span class="days">× ' + item.days + "일</span>" +
-                    '<span class="done-date">' +
-                        "완료 예정 " +
-                        (done.getMonth() + 1) + "/" + done.getDate() +
-                    '</span>' +
-                '</div>';
-        });
-
-        return (
-            '<section class="panel" id="scenario-panel">' +
-                '<div class="scenario-head">' +
-                    '<h2 class="panel-title">🎯 복구 시나리오</h2>' +
-                    '<button type="button" class="scenario-refresh" ' +
-                        'id="refresh-scenario">🔄 새로고침</button>' +
-                '</div>' +
-                '<p class="field-hint">' +
-                    "남은 손실 " + Calc.usd(remaining) +
-                    (Math.round(remaining) !== remaining
-                        ? "을 정수 $" + Calc.fmt(s.target) +
-                          "로 맞춰서"
-                        : "의 약수로") +
-                    " 계산한 조합입니다. " +
-                    "하루 목표가 정확히 정수로 떨어집니다." +
-                '</p>' +
-                '<div class="scenario-list">' + cards + '</div>' +
-            '</section>'
-        );
-    }
-
-    function bindScenario(container) {
-        const button = container.querySelector("#refresh-scenario");
-
-        if (!button) {
-            return;
-        }
-
-        button.addEventListener("click", () => {
-            const old = container.querySelector("#scenario-panel");
-            const tmp = document.createElement("div");
-
-            tmp.innerHTML = scenarioHtml();
-
-            old.replaceWith(tmp.firstElementChild);
-
-            bindScenario(container);
-        });
     }
 
     /* ==================================================
@@ -230,13 +143,9 @@ MinusBook.DayView = (() => {
             '</section>' +
 
             /* 전체 복구 현황 (리베이트 제외 / 포함 기준) */
-            MinusBook.App.statusHtml() +
-
-            /* 복구 시나리오 (약수 조합 + 새로고침) */
-            scenarioHtml();
+            MinusBook.App.statusHtml();
 
         bindEvents(container);
-        bindScenario(container);
         refreshCalc(container);
     }
 
