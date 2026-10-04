@@ -71,47 +71,75 @@ MinusBook.DayView = (() => {
         );
     }
 
+    function symbolOptionsHtml(selectedSymbol, placeholder) {
+        const selected = String(selectedSymbol || "").trim().toUpperCase();
+        const symbols = Array.from(
+            new Set(Data.getSymbols().concat(selected ? [selected] : []))
+        ).sort((a, b) => a.localeCompare(b, "ko"));
+
+        return (
+            '<option value="">' + escapeHtml(placeholder) + '</option>' +
+            symbols.map(symbol =>
+                '<option value="' + escapeHtml(symbol) + '"' +
+                    (symbol === selected ? ' selected' : '') +
+                    '>' + escapeHtml(symbol) + '</option>'
+            ).join("")
+        );
+    }
+
     function positionRowHtml(position, index) {
         const symbol = position.symbol || "";
         const side = position.side === "Sell" ? "Sell" : "Buy";
         const pnl = position.pnl == null ? "" : position.pnl;
+        const lots = position.lots == null ? "" : position.lots;
+
+        const legacyLots = position.legacyLots === true || (
+            position.legacyLots == null &&
+            position.lots == null &&
+            position.pnl != null &&
+            String(position.pnl).trim() !== ""
+        );
+
+        const pnlNumber = Number(pnl);
+        const pnlClass = String(pnl).trim() === ""
+            ? ""
+            : pnlNumber < 0
+                ? " is-loss"
+                : pnlNumber > 0
+                    ? " is-profit"
+                    : "";
 
         return (
-            '<div class="position-row">' +
-                '<div class="position-row-header">' +
-                    '<span class="position-number">진입 ' +
-                        (index + 1) + '번</span>' +
-                    '<button type="button" class="position-remove" ' +
-                        'data-remove-position="' + index + '" ' +
-                        'aria-label="' + (index + 1) + '번 기록 삭제">' +
-                        '삭제' +
-                    '</button>' +
-                '</div>' +
-                '<label class="position-label">' +
-                    '<span>종목</span>' +
-                    '<input type="text" data-position-field="symbol" ' +
-                        'list="position-symbols" maxlength="80" ' +
-                        'autocomplete="off" placeholder="선택 또는 직접 입력" ' +
-                        'value="' + escapeHtml(symbol) + '">' +
-                '</label>' +
-                '<label class="position-label">' +
-                    '<span>방향</span>' +
-                    '<select data-position-field="side">' +
-                        '<option value="Buy"' +
-                            (side === "Buy" ? ' selected' : '') +
-                            '>Buy</option>' +
-                        '<option value="Sell"' +
-                            (side === "Sell" ? ' selected' : '') +
-                            '>Sell</option>' +
-                    '</select>' +
-                '</label>' +
-                '<label class="position-label pnl">' +
-                    '<span>손익 (USD · 손실은 음수)</span>' +
-                    '<input type="text" inputmode="decimal" ' +
-                        'data-position-field="pnl" autocomplete="off" ' +
-                        'placeholder="예: 120.50 또는 -35.00" ' +
-                        'value="' + escapeHtml(pnl) + '">' +
-                '</label>' +
+            '<div class="position-row" data-legacy-lots="' +
+                (legacyLots ? '1' : '0') + '">' +
+                '<span class="position-number">' + (index + 1) + '</span>' +
+                '<select data-position-field="symbol" ' +
+                    'aria-label="' + (index + 1) + '번 종목">' +
+                    symbolOptionsHtml(symbol, "종목 선택") +
+                '</select>' +
+                '<select data-position-field="side" ' +
+                    'aria-label="' + (index + 1) + '번 방향">' +
+                    '<option value="Buy"' +
+                        (side === "Buy" ? ' selected' : '') +
+                        '>Buy</option>' +
+                    '<option value="Sell"' +
+                        (side === "Sell" ? ' selected' : '') +
+                        '>Sell</option>' +
+                '</select>' +
+                '<input type="text" inputmode="decimal" ' +
+                    'data-position-field="lots" autocomplete="off" ' +
+                    'aria-label="' + (index + 1) + '번 랏수" ' +
+                    'placeholder="' + (legacyLots ? '미입력' : '랏수') + '" ' +
+                    'value="' + escapeHtml(lots) + '">' +
+                '<input type="text" inputmode="decimal" ' +
+                    'class="' + pnlClass.trim() + '" ' +
+                    'data-position-field="pnl" autocomplete="off" ' +
+                    'aria-label="' + (index + 1) + '번 손익 USD" ' +
+                    'placeholder="손익 ±" ' +
+                    'value="' + escapeHtml(pnl) + '">' +
+                '<button type="button" class="position-remove" ' +
+                    'data-remove-position="' + index + '" ' +
+                    'aria-label="' + (index + 1) + '번 기록 삭제">×</button>' +
             '</div>'
         );
     }
@@ -143,30 +171,44 @@ MinusBook.DayView = (() => {
             )
             : '<input id="f-recover" type="hidden" value="0">';
 
-        const options = Data.getSymbols().map(symbol =>
-            '<option value="' + escapeHtml(symbol) + '"></option>'
-        ).join("");
-
         return (
             legacyHtml +
             '<div class="position-toolbar">' +
                 '<h3>포지션별 손익</h3>' +
                 '<span class="position-count" id="position-count">' +
-                    '기록 ' + positions.length + '개' +
+                    '진입 ' + positions.length + '회' +
                 '</span>' +
             '</div>' +
-            '<datalist id="position-symbols">' + options + '</datalist>' +
-            '<div class="position-list" id="position-list">' +
-                (positions.length > 0
-                    ? positions.map(positionRowHtml).join("")
-                    : '<p class="position-empty">포지션을 추가해 주세요.</p>') +
+            '<div class="symbol-manager">' +
+                '<select id="manage-symbol" aria-label="관리할 종목">' +
+                    symbolOptionsHtml("", "저장된 종목") +
+                '</select>' +
+                '<button type="button" class="position-small-button" ' +
+                    'id="add-symbol">종목 추가</button>' +
+                '<button type="button" class="position-small-button" ' +
+                    'id="rename-symbol">이름 변경</button>' +
             '</div>' +
-            '<button type="button" class="action-button secondary" ' +
-                'id="add-position">+ 포지션 추가</button>' +
+            '<div class="position-sheet">' +
+                '<div class="position-sheet-header" aria-hidden="true">' +
+                    '<span>번호</span>' +
+                    '<span>종목</span>' +
+                    '<span>방향</span>' +
+                    '<span>랏수</span>' +
+                    '<span>손익 USD</span>' +
+                    '<span></span>' +
+                '</div>' +
+                '<div class="position-list" id="position-list">' +
+                    (positions.length > 0
+                        ? positions.map(positionRowHtml).join("")
+                        : '<p class="position-empty">+ 줄 추가로 기록하세요.</p>') +
+                '</div>' +
+            '</div>' +
+            '<button type="button" class="position-small-button" ' +
+                'id="add-position">+ 줄 추가</button>' +
             '<p class="field-hint position-help">' +
-                '날짜별로 1번부터 자동 번호가 붙습니다. ' +
-                '손익 0도 진입 1회이며, 삭제하면 번호를 다시 정렬합니다. ' +
-                '한 진입을 분할 청산했다면 같은 기록의 손익을 합쳐 수정하세요.' +
+                '종목은 한 번 추가하면 목록에서 선택할 수 있습니다. ' +
+                '손실은 음수로 입력하세요. ' +
+                '이름 변경은 저장된 과거 기록에도 적용됩니다.' +
             '</p>'
         );
     }
@@ -182,46 +224,76 @@ MinusBook.DayView = (() => {
             const sideInput = row.querySelector(
                 '[data-position-field="side"]'
             );
+            const lotsInput = row.querySelector(
+                '[data-position-field="lots"]'
+            );
             const pnlInput = row.querySelector(
                 '[data-position-field="pnl"]'
             );
 
             const symbol = symbolInput.value.trim().toUpperCase();
             const side = sideInput.value;
+            const rawLots = lotsInput.value.trim();
             const rawPnl = pnlInput.value.trim();
-            const validSyntax = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(
-                rawPnl
-            );
+            const lots = Number(rawLots);
             const pnl = Number(rawPnl);
+
             const validPnl =
-                validSyntax &&
+                /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawPnl) &&
                 Number.isFinite(pnl) &&
                 Number.isSafeInteger(Math.round(pnl * 100));
 
+            const omittedLegacyLots =
+                rawLots === "" &&
+                row.dataset.legacyLots === "1";
+
+            const validLots = omittedLegacyLots || (
+                /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(rawLots) &&
+                Number.isFinite(lots) &&
+                lots > 0
+            );
+
+            const validSide = side === "Buy" || side === "Sell";
+
             if (
                 validate &&
-                (!symbol || !validPnl || (side !== "Buy" && side !== "Sell"))
+                (!symbol || !validSide || !validLots || !validPnl)
             ) {
-                const target = !symbol ? symbolInput : pnlInput;
+                let target;
+                let message;
+
+                if (!symbol) {
+                    target = symbolInput;
+                    message = "종목을 선택하세요.";
+                } else if (!validSide) {
+                    target = sideInput;
+                    message = "Buy 또는 Sell을 선택하세요.";
+                } else if (!validLots) {
+                    target = lotsInput;
+                    message = "랏수는 0보다 큰 숫자로 입력하세요.";
+                } else {
+                    target = pnlInput;
+                    message = "손익을 숫자로 입력하세요. 손익이 없으면 0입니다.";
+                }
 
                 target.focus();
-                throw new Error(
-                    (index + 1) + "번 기록의 종목·방향·손익을 확인해 주세요. " +
-                    "손익이 0이면 0을 입력하세요."
-                );
+
+                throw new Error((index + 1) + "번 기록: " + message);
             }
 
-            if (
-                symbol &&
-                validPnl &&
-                (side === "Buy" || side === "Sell")
-            ) {
-                positions.push({
+            if (symbol && validSide && validLots && validPnl) {
+                const position = {
                     no: positions.length + 1,
                     symbol: symbol,
                     side: side,
                     pnl: Math.round(pnl * 100) / 100
-                });
+                };
+
+                if (!omittedLegacyLots) {
+                    position.lots = lots;
+                }
+
+                positions.push(position);
             }
         });
 
@@ -238,9 +310,13 @@ MinusBook.DayView = (() => {
             side: row.querySelector(
                 '[data-position-field="side"]'
             ).value,
+            lots: row.querySelector(
+                '[data-position-field="lots"]'
+            ).value,
             pnl: row.querySelector(
                 '[data-position-field="pnl"]'
-            ).value
+            ).value,
+            legacyLots: row.dataset.legacyLots === "1"
         }));
     }
 
@@ -248,7 +324,7 @@ MinusBook.DayView = (() => {
         container.querySelector("#position-list").innerHTML =
             positions.length > 0
                 ? positions.map(positionRowHtml).join("")
-                : '<p class="position-empty">포지션을 추가해 주세요.</p>';
+                : '<p class="position-empty">+ 줄 추가로 기록하세요.</p>';
 
         refreshCalc(container);
     }
@@ -475,15 +551,122 @@ MinusBook.DayView = (() => {
     function bindEvents(container) {
         const positionList = container.querySelector("#position-list");
 
+        async function runSymbolAction(action, from, to) {
+            const drafts = readPositionDrafts(container);
+            const manager = container.querySelector("#manage-symbol");
+            const controls = Array.from(
+                container.querySelectorAll("input, select, button")
+            ).concat(Array.from(
+                document.querySelectorAll(".nav-button")
+            ));
+            const previousDisabled = controls.map(control => control.disabled);
+
+            controls.forEach(control => {
+                control.disabled = true;
+            });
+
+            try {
+                const result = action === "rename"
+                    ? await Data.renameSymbol(from, to)
+                    : await Data.saveSymbol(to);
+
+                if (!manager.isConnected) {
+                    return;
+                }
+
+                if (action === "rename") {
+                    drafts.forEach(position => {
+                        if (position.symbol === from) {
+                            position.symbol = to;
+                        }
+                    });
+                }
+
+                manager.innerHTML = symbolOptionsHtml(to, "저장된 종목");
+                renderPositionDrafts(container, drafts);
+                MinusBook.App.afterSync(result);
+            } catch (error) {
+                MinusBook.App.showToast(error.message);
+            } finally {
+                controls.forEach((control, index) => {
+                    if (control.isConnected) {
+                        control.disabled = previousDisabled[index];
+                    }
+                });
+            }
+        }
+
+        container.querySelector("#add-symbol")
+            .addEventListener("click", async () => {
+                const input = window.prompt("추가할 종목명을 입력하세요.");
+
+                if (input === null) {
+                    return;
+                }
+
+                const name = input.trim().toUpperCase();
+
+                if (!name || name.length > 80) {
+                    MinusBook.App.showToast("종목명은 1~80자로 입력하세요.");
+                    return;
+                }
+
+                await runSymbolAction("add", "", name);
+            });
+
+        container.querySelector("#rename-symbol")
+            .addEventListener("click", async () => {
+                const from = container.querySelector("#manage-symbol").value;
+
+                if (!from) {
+                    MinusBook.App.showToast("이름을 변경할 종목을 먼저 선택하세요.");
+                    return;
+                }
+
+                const input = window.prompt(
+                    "새 종목명을 입력하세요. 저장된 과거 기록도 함께 변경됩니다.",
+                    from
+                );
+
+                if (input === null) {
+                    return;
+                }
+
+                const to = input.trim().toUpperCase();
+
+                if (!to || to.length > 80) {
+                    MinusBook.App.showToast("종목명은 1~80자로 입력하세요.");
+                    return;
+                }
+
+                if (from === to) {
+                    return;
+                }
+
+                if (
+                    Data.getSymbols().includes(to) &&
+                    !window.confirm(
+                        to + " 종목이 이미 있습니다. 해당 종목으로 합칠까요?"
+                    )
+                ) {
+                    return;
+                }
+
+                await runSymbolAction("rename", from, to);
+            });
+
         container.querySelector("#add-position")
             .addEventListener("click", () => {
                 const drafts = readPositionDrafts(container);
                 const previous = drafts[drafts.length - 1];
+                const managedSymbol = container.querySelector("#manage-symbol").value;
 
                 drafts.push({
-                    symbol: previous ? previous.symbol : "",
+                    symbol: managedSymbol || (previous ? previous.symbol : ""),
                     side: previous ? previous.side : "Buy",
-                    pnl: ""
+                    lots: previous ? previous.lots : "",
+                    pnl: "",
+                    legacyLots: false
                 });
 
                 renderPositionDrafts(container, drafts);
@@ -497,7 +680,22 @@ MinusBook.DayView = (() => {
                 ).focus();
             });
 
-        positionList.addEventListener("input", () => {
+        positionList.addEventListener("input", event => {
+            if (event.target.matches('[data-position-field="pnl"]')) {
+                const input = event.target;
+                const raw = input.value.trim();
+                const value = Number(raw);
+
+                input.classList.toggle(
+                    "is-profit",
+                    raw !== "" && Number.isFinite(value) && value > 0
+                );
+                input.classList.toggle(
+                    "is-loss",
+                    raw !== "" && Number.isFinite(value) && value < 0
+                );
+            }
+
             refreshCalc(container);
         });
 
@@ -508,7 +706,7 @@ MinusBook.DayView = (() => {
         positionList.addEventListener("focusin", event => {
             if (
                 event.target.matches(
-                    '[data-position-field="pnl"]'
+                    '[data-position-field="pnl"], [data-position-field="lots"]'
                 )
             ) {
                 event.target.select();

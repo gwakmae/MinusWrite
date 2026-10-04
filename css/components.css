@@ -708,82 +708,112 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .position-toolbar h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .position-count {
     color: var(--text-3);
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.position-list {
-    display: grid;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.position-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 100px;
-    gap: 10px;
-    padding: 14px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-}
-
-.position-row-header {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.position-number {
-    color: var(--blue);
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.position-remove {
-    padding: 5px 10px;
-    color: var(--red);
-    background: rgba(255, 59, 48, 0.08);
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.position-label {
-    display: grid;
-    min-width: 0;
-    gap: 6px;
-    color: var(--text-2);
     font-size: 12px;
     font-weight: 700;
 }
 
-.position-label.pnl {
-    grid-column: 1 / -1;
+.symbol-manager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.symbol-manager select {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.position-small-button {
+    padding: 8px 10px;
+    color: var(--blue);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.position-sheet {
+    overflow-x: auto;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.position-sheet-header,
+.position-row {
+    display: grid;
+    grid-template-columns: 34px minmax(130px, 1fr) 72px 82px 112px 34px;
+    align-items: center;
+    gap: 6px;
+    min-width: 510px;
+    padding: 6px 8px;
+}
+
+.position-sheet-header {
+    color: var(--text-3);
+    background: var(--surface-2);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.position-list {
+    display: block;
+    margin: 0;
+}
+
+.position-row {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+}
+
+.position-number {
+    color: var(--text-3);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .position-row input,
 .position-row select {
     width: 100%;
     min-width: 0;
-    padding: 12px;
+    height: 34px;
+    padding: 5px 6px;
     color: var(--text);
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 5px;
     font: inherit;
-    font-size: 16px;
+    font-size: 13px;
+}
+
+.position-row input {
+    text-align: right;
 }
 
 .position-row input:focus,
@@ -792,16 +822,37 @@
     outline-offset: 1px;
 }
 
+.position-row input[data-position-field="pnl"].is-profit {
+    color: var(--blue);
+}
+
+.position-row input[data-position-field="pnl"].is-loss {
+    color: var(--red);
+}
+
+.position-remove {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: var(--red);
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 .position-empty {
     margin: 0;
-    padding: 18px 12px;
+    padding: 14px;
     color: var(--text-3);
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .position-help {
-    margin-bottom: 18px;
+    margin: 8px 0 16px;
+    font-size: 12px;
 }
 
 .calc-row .value.profit {

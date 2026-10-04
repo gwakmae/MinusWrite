@@ -54,7 +54,8 @@ MinusBook.Data = (() => {
     /* ==================================================
        미동기 변경분 (기기에 임시 보관)
        { upserts: {dateKey: entry}, deletes: [dateKey],
-         settings: null | {lossAmount}, symbols: [symbol] }
+         settings: null | {lossAmount}, symbols: [symbol],
+         symbolRenames: [{from, to}] }
        ================================================== */
 
     function emptyPending() {
@@ -62,7 +63,8 @@ MinusBook.Data = (() => {
             upserts: {},
             deletes: [],
             settings: null,
-            symbols: []
+            symbols: [],
+            symbolRenames: []
         };
     }
 
@@ -80,7 +82,8 @@ MinusBook.Data = (() => {
                 upserts: parsed.upserts || {},
                 deletes: parsed.deletes || [],
                 settings: parsed.settings || null,
-                symbols: mergeSymbols(parsed.symbols)
+                symbols: mergeSymbols(parsed.symbols),
+                symbolRenames: normalizeSymbolRenames(parsed.symbolRenames)
             };
         } catch (e) {
             return emptyPending();
@@ -93,7 +96,8 @@ MinusBook.Data = (() => {
                 Object.keys(pending.upserts).length === 0 &&
                 pending.deletes.length === 0 &&
                 pending.settings === null &&
-                mergeSymbols(pending.symbols).length === 0;
+                mergeSymbols(pending.symbols).length === 0 &&
+                normalizeSymbolRenames(pending.symbolRenames).length === 0;
 
             if (empty) {
                 localStorage.removeItem(PENDING_KEY);
@@ -115,7 +119,8 @@ MinusBook.Data = (() => {
             Object.keys(p.upserts).length > 0 ||
             p.deletes.length > 0 ||
             p.settings !== null ||
-            p.symbols.length > 0
+            p.symbols.length > 0 ||
+            p.symbolRenames.length > 0
         );
     }
 
@@ -199,6 +204,112 @@ MinusBook.Data = (() => {
         return Array.from(symbols).sort((a, b) =>
             a.localeCompare(b, "ko")
         );
+    }
+
+    function normalizeSymbolRenames(value) {
+        if (!Array.isArray(value)) {
+            return [];
+        }
+
+        return value.reduce((result, item) => {
+            if (!item || typeof item !== "object") {
+                return result;
+            }
+
+            const from = String(item.from || "").trim().toUpperCase();
+            const to = String(item.to || "").trim().toUpperCase();
+
+            if (from && to && from !== to) {
+                result.push({ from: from, to: to });
+            }
+
+            return result;
+        }, []);
+    }
+
+    function applySymbolRenames(target, renames) {
+        normalizeSymbolRenames(renames).forEach(rename => {
+            target.symbols = mergeSymbols(
+                (target.symbols || []).map(symbol =>
+                    symbol === rename.from ? rename.to : symbol
+                ),
+                [rename.to]
+            );
+
+            Object.values(target.entries || {}).forEach(entry => {
+                if (!entry || !Array.isArray(entry.positions)) {
+                    return;
+                }
+
+                entry.positions.forEach(position => {
+                    if (position.symbol === rename.from) {
+                        position.symbol = rename.to;
+                    }
+                });
+            });
+        });
+
+        target.symbols = mergeSymbols(
+            target.symbols,
+            symbolsFromEntries(target.entries)
+        );
+    }
+
+    async function saveSymbol(name) {
+        const symbol = String(name || "").trim().toUpperCase();
+
+        if (!symbol || symbol.length > 80) {
+            throw new Error("종목명은 1~80자로 입력하세요.");
+        }
+
+        const pending = getPending();
+
+        state.symbols = mergeSymbols(state.symbols, [symbol]);
+        pending.symbols = mergeSymbols(pending.symbols, [symbol]);
+
+        setPending(pending);
+
+        return sync();
+    }
+
+    async function renameSymbol(oldName, newName) {
+        const from = String(oldName || "").trim().toUpperCase();
+        const to = String(newName || "").trim().toUpperCase();
+
+        if (!from || !getSymbols().includes(from)) {
+            throw new Error("변경할 종목을 선택하세요.");
+        }
+
+        if (!to || to.length > 80) {
+            throw new Error("종목명은 1~80자로 입력하세요.");
+        }
+
+        if (from === to) {
+            return { ok: true, skipped: true };
+        }
+
+        const pending = getPending();
+        const rename = { from: from, to: to };
+
+        applySymbolRenames(state, [rename]);
+
+        pending.symbols = mergeSymbols(
+            pending.symbols.map(symbol => symbol === from ? to : symbol),
+            [to]
+        );
+        pending.symbolRenames.push(rename);
+
+        const pendingState = {
+            entries: pending.upserts,
+            symbols: pending.symbols
+        };
+
+        applySymbolRenames(pendingState, [rename]);
+        pending.symbols = pendingState.symbols;
+
+        setPending(pending);
+
+        return sync();
     }
 
     function symbolsFromEntries(entries) {
@@ -285,12 +396,26 @@ MinusBook.Data = (() => {
                     return;
                 }
 
-                positions.push({
+                const normalizedPosition = {
                     no: positions.length + 1,
                     symbol: symbol,
                     side: side,
                     pnl: Math.round(pnl * 100) / 100
-                });
+                };
+
+                const rawLots = position.lots;
+                const lots = Number(rawLots);
+
+                if (
+                    rawLots != null &&
+                    String(rawLots).trim() !== "" &&
+                    Number.isFinite(lots) &&
+                    lots > 0
+                ) {
+                    normalizedPosition.lots = lots;
+                }
+
+                positions.push(normalizedPosition);
             });
 
             if (positions.length > 0) {
@@ -387,6 +512,8 @@ MinusBook.Data = (() => {
             pending.symbols,
             symbolsFromEntries(state.entries)
         );
+
+        applySymbolRenames(state, pending.symbolRenames);
     }
 
     /* ==================================================
@@ -555,6 +682,8 @@ MinusBook.Data = (() => {
                 symbolsFromEntries(merged.entries)
             );
 
+            applySymbolRenames(merged, pending.symbolRenames);
+
             /* 날짜순 정렬 (보기 좋은 diff를 위해) */
             const sortedEntries = {};
 
@@ -624,6 +753,8 @@ MinusBook.Data = (() => {
         getState,
         getEntry,
         getSymbols,
+        saveSymbol,
+        renameSymbol,
         getLossAmount,
         getSyncState,
         hasPending,
