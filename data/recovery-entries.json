@@ -10,6 +10,7 @@
     }
   },
   "symbols": [
+    "FIXEDVOL20",
     "FIXEDVOL60"
   ]
 }
