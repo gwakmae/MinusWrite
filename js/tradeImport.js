@@ -164,14 +164,6 @@ ${END}
             throw new Error("warnings는 문자열 배열이어야 합니다.");
         }
 
-        if (data.warnings.length > 0) {
-            throw new Error(
-                "AI가 확인 필요 항목을 반환했습니다.\n" +
-                data.warnings.join("\n") +
-                "\n원본과 대조하여 수정한 후 다시 검토하세요."
-            );
-        }
-
         if (
             !Array.isArray(data.trades) ||
             data.trades.length === 0 ||
@@ -267,7 +259,11 @@ ${END}
             };
         });
 
-        return { trades, total: totalCents / 100 };
+        return {
+            trades,
+            total: totalCents / 100,
+            warnings: data.warnings
+        };
     }
 
     function signature(position) {
@@ -389,12 +385,22 @@ ${END}
                     ).length;
 
                     status.textContent =
+                        "검토 완료 · " +
                         options.date + " · " +
                         reviewed.trades.length + "건 · 손익 합계 " +
                         MinusBook.Calc.usd(reviewed.total) +
+
                         (overlaps
                             ? "\n기존 입력과 값이 같은 거래 " + overlaps +
                               "건이 있습니다. 중복 여부를 확인하세요."
+                            : "") +
+
+                        (reviewed.warnings.length > 0
+                            ? "\n\nAI 안내 / 확인 사항:\n" +
+                              reviewed.warnings
+                                  .map(message => "• " + message)
+                                  .join("\n") +
+                              "\n\n내용을 확인한 뒤 입력 폼에 추가하세요."
                             : "");
 
                     const table = document.createElement("table");
@@ -432,6 +438,18 @@ ${END}
 
         apply.addEventListener("click", () => {
             if (!reviewed) {
+                return;
+            }
+
+            if (
+                reviewed.warnings.length > 0 &&
+                !window.confirm(
+                    "AI가 다음 안내 / 확인 사항을 남겼습니다.\n\n" +
+                    reviewed.warnings.join("\n") +
+                    "\n\n원본과 비교해 확인하셨나요?" +
+                    "\n확인을 누르면 입력 폼에 추가합니다."
+                )
+            ) {
                 return;
             }
 
