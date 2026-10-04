@@ -25,13 +25,24 @@ MinusBook.Calc = (() => {
             return null;
         }
 
-        const recover = num(entry.recover);
-        const rebate = num(entry.rebate);
+        const positions = Array.isArray(entry.positions)
+            ? entry.positions
+            : [];
+
+        const legacyCents = Math.round(num(entry.recover) * 100);
+        const positionCents = positions.reduce(
+            (sum, position) =>
+                sum + Math.round(num(position.pnl) * 100),
+            0
+        );
+        const rebateCents = Math.round(num(entry.rebate) * 100);
 
         return {
-            recover: recover,
-            rebate: rebate,
-            total: recover + rebate
+            recover: (legacyCents + positionCents) / 100,
+            rebate: rebateCents / 100,
+            total: (legacyCents + positionCents + rebateCents) / 100,
+            positionTotal: positionCents / 100,
+            trades: positions.length
         };
     }
 
@@ -107,7 +118,7 @@ MinusBook.Calc = (() => {
             return 1;
         }
 
-        return Math.min(1, recovered / target);
+        return Math.max(0, Math.min(1, recovered / target));
     }
 
     /* 날짜 문자열 도구 */

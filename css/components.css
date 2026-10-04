@@ -702,3 +702,112 @@
     font-size: 12px;
     font-weight: 800;
 }
+
+.position-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.position-toolbar h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.position-count {
+    color: var(--text-3);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.position-list {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.position-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 100px;
+    gap: 10px;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.position-row-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.position-number {
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.position-remove {
+    padding: 5px 10px;
+    color: var(--red);
+    background: rgba(255, 59, 48, 0.08);
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.position-label {
+    display: grid;
+    min-width: 0;
+    gap: 6px;
+    color: var(--text-2);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.position-label.pnl {
+    grid-column: 1 / -1;
+}
+
+.position-row input,
+.position-row select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 16px;
+}
+
+.position-row input:focus,
+.position-row select:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+}
+
+.position-empty {
+    margin: 0;
+    padding: 18px 12px;
+    color: var(--text-3);
+    text-align: center;
+    font-size: 13px;
+}
+
+.position-help {
+    margin-bottom: 18px;
+}
+
+.calc-row .value.profit {
+    color: var(--blue);
+}
+
+.calc-row .value.loss {
+    color: var(--red);
+}

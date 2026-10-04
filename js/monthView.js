@@ -50,6 +50,14 @@ MinusBook.MonthView = (() => {
         const prefix =
             viewYear + "-" + String(viewMonth + 1).padStart(2, "0");
 
+        const monthTrades = Object.keys(state.entries)
+            .filter(key => key.startsWith(prefix + "-"))
+            .reduce((count, key) => {
+                const result = Calc.day(state.entries[key]);
+
+                return count + (result ? result.trades : 0);
+            }, 0);
+
         /* 이 달 시작 전까지의 누계 ("-00" 꼼수로 그 달 1일 직전까지) */
         const before = Calc.totals(state.entries, prefix + "-00");
 
@@ -142,7 +150,7 @@ MinusBook.MonthView = (() => {
                     '<div class="summary-card net">' +
                         '<span class="label">' +
                             (viewMonth + 1) + "월 총 복구액 (기록 " +
-                            monthTotal.days + "일)" +
+                            monthTotal.days + "일 · 진입 " + monthTrades + "회)" +
                         '</span>' +
                         '<span class="amount">' +
                             Calc.usd(monthTotal.total) +
@@ -165,8 +173,27 @@ MinusBook.MonthView = (() => {
     /* "복구 50,000 · 리베이트 12,000" 요약 */
     function daySummary(entry, result) {
         const parts = [];
+        const hasPositions =
+            Array.isArray(entry.positions) &&
+            entry.positions.length > 0;
+        const escapeText = value => String(value).replace(
+            /[&<>"']/g,
+            character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]
+        );
 
-        if (result.recover) {
+        if (hasPositions) {
+            parts.push("진입 " + result.trades + "회");
+        } else if (entry.recover) {
+            parts.push("기존 일괄 기록 · 횟수 미상");
+        }
+
+        if (result.recover || hasPositions) {
             parts.push("복구 " + Calc.fmt(result.recover));
         }
 
@@ -175,7 +202,7 @@ MinusBook.MonthView = (() => {
         }
 
         if (entry.note) {
-            parts.push("📝 " + entry.note);
+            parts.push("📝 " + escapeText(entry.note));
         }
 
         return '<span class="nums">' + parts.join(" · ") + '</span>';

@@ -55,6 +55,205 @@ MinusBook.DayView = (() => {
     }
 
     /* ==================================================
+       포지션 화면 도우미
+       ================================================== */
+
+    function escapeHtml(value) {
+        return String(value == null ? "" : value).replace(
+            /[&<>"']/g,
+            character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]
+        );
+    }
+
+    function positionRowHtml(position, index) {
+        const symbol = position.symbol || "";
+        const side = position.side === "Sell" ? "Sell" : "Buy";
+        const pnl = position.pnl == null ? "" : position.pnl;
+
+        return (
+            '<div class="position-row">' +
+                '<div class="position-row-header">' +
+                    '<span class="position-number">진입 ' +
+                        (index + 1) + '번</span>' +
+                    '<button type="button" class="position-remove" ' +
+                        'data-remove-position="' + index + '" ' +
+                        'aria-label="' + (index + 1) + '번 기록 삭제">' +
+                        '삭제' +
+                    '</button>' +
+                '</div>' +
+                '<label class="position-label">' +
+                    '<span>종목</span>' +
+                    '<input type="text" data-position-field="symbol" ' +
+                        'list="position-symbols" maxlength="80" ' +
+                        'autocomplete="off" placeholder="선택 또는 직접 입력" ' +
+                        'value="' + escapeHtml(symbol) + '">' +
+                '</label>' +
+                '<label class="position-label">' +
+                    '<span>방향</span>' +
+                    '<select data-position-field="side">' +
+                        '<option value="Buy"' +
+                            (side === "Buy" ? ' selected' : '') +
+                            '>Buy</option>' +
+                        '<option value="Sell"' +
+                            (side === "Sell" ? ' selected' : '') +
+                            '>Sell</option>' +
+                    '</select>' +
+                '</label>' +
+                '<label class="position-label pnl">' +
+                    '<span>손익 (USD · 손실은 음수)</span>' +
+                    '<input type="text" inputmode="decimal" ' +
+                        'data-position-field="pnl" autocomplete="off" ' +
+                        'placeholder="예: 120.50 또는 -35.00" ' +
+                        'value="' + escapeHtml(pnl) + '">' +
+                '</label>' +
+            '</div>'
+        );
+    }
+
+    function positionsHtml(entry) {
+        const positions = entry && Array.isArray(entry.positions)
+            ? entry.positions
+            : [];
+        const legacyRecover = entry && entry.recover
+            ? entry.recover
+            : 0;
+
+        const legacyHtml = legacyRecover !== 0
+            ? (
+                '<div class="field">' +
+                    '<label for="f-recover">기존 일괄 복구액 (USD)</label>' +
+                    '<div class="money-input-wrap">' +
+                        '<input id="f-recover" type="number" ' +
+                            'inputmode="decimal" step="0.01" ' +
+                            'value="' + legacyRecover + '">' +
+                        '<span class="won">$</span>' +
+                    '</div>' +
+                    '<p class="field-hint">' +
+                        '이전 기록은 그대로 유지됩니다. 아래 포지션은 ' +
+                        '이 금액에 추가로 합산되며, 기존 금액의 진입 횟수는 ' +
+                        '집계하지 않습니다.' +
+                    '</p>' +
+                '</div>'
+            )
+            : '<input id="f-recover" type="hidden" value="0">';
+
+        const options = Data.getSymbols().map(symbol =>
+            '<option value="' + escapeHtml(symbol) + '"></option>'
+        ).join("");
+
+        return (
+            legacyHtml +
+            '<div class="position-toolbar">' +
+                '<h3>포지션별 손익</h3>' +
+                '<span class="position-count" id="position-count">' +
+                    '기록 ' + positions.length + '개' +
+                '</span>' +
+            '</div>' +
+            '<datalist id="position-symbols">' + options + '</datalist>' +
+            '<div class="position-list" id="position-list">' +
+                (positions.length > 0
+                    ? positions.map(positionRowHtml).join("")
+                    : '<p class="position-empty">포지션을 추가해 주세요.</p>') +
+            '</div>' +
+            '<button type="button" class="action-button secondary" ' +
+                'id="add-position">+ 포지션 추가</button>' +
+            '<p class="field-hint position-help">' +
+                '날짜별로 1번부터 자동 번호가 붙습니다. ' +
+                '손익 0도 진입 1회이며, 삭제하면 번호를 다시 정렬합니다. ' +
+                '한 진입을 분할 청산했다면 같은 기록의 손익을 합쳐 수정하세요.' +
+            '</p>'
+        );
+    }
+
+    function readPositionRows(container, validate) {
+        const positions = [];
+        const rows = container.querySelectorAll(".position-row");
+
+        rows.forEach((row, index) => {
+            const symbolInput = row.querySelector(
+                '[data-position-field="symbol"]'
+            );
+            const sideInput = row.querySelector(
+                '[data-position-field="side"]'
+            );
+            const pnlInput = row.querySelector(
+                '[data-position-field="pnl"]'
+            );
+
+            const symbol = symbolInput.value.trim().toUpperCase();
+            const side = sideInput.value;
+            const rawPnl = pnlInput.value.trim();
+            const validSyntax = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(
+                rawPnl
+            );
+            const pnl = Number(rawPnl);
+            const validPnl =
+                validSyntax &&
+                Number.isFinite(pnl) &&
+                Number.isSafeInteger(Math.round(pnl * 100));
+
+            if (
+                validate &&
+                (!symbol || !validPnl || (side !== "Buy" && side !== "Sell"))
+            ) {
+                const target = !symbol ? symbolInput : pnlInput;
+
+                target.focus();
+                throw new Error(
+                    (index + 1) + "번 기록의 종목·방향·손익을 확인해 주세요. " +
+                    "손익이 0이면 0을 입력하세요."
+                );
+            }
+
+            if (
+                symbol &&
+                validPnl &&
+                (side === "Buy" || side === "Sell")
+            ) {
+                positions.push({
+                    no: positions.length + 1,
+                    symbol: symbol,
+                    side: side,
+                    pnl: Math.round(pnl * 100) / 100
+                });
+            }
+        });
+
+        return positions;
+    }
+
+    function readPositionDrafts(container) {
+        return Array.from(
+            container.querySelectorAll(".position-row")
+        ).map(row => ({
+            symbol: row.querySelector(
+                '[data-position-field="symbol"]'
+            ).value,
+            side: row.querySelector(
+                '[data-position-field="side"]'
+            ).value,
+            pnl: row.querySelector(
+                '[data-position-field="pnl"]'
+            ).value
+        }));
+    }
+
+    function renderPositionDrafts(container, positions) {
+        container.querySelector("#position-list").innerHTML =
+            positions.length > 0
+                ? positions.map(positionRowHtml).join("")
+                : '<p class="position-empty">포지션을 추가해 주세요.</p>';
+
+        refreshCalc(container);
+    }
+
+    /* ==================================================
        렌더링
        ================================================== */
 
@@ -91,16 +290,7 @@ MinusBook.DayView = (() => {
                         'id="next-day" aria-label="다음날">▶</button>' +
                 '</div>' +
 
-                '<div class="field">' +
-                    '<label for="f-recover">오늘의 복구 (USD)</label>' +
-                    '<div class="money-input-wrap">' +
-                        '<input id="f-recover" type="number" ' +
-                            'inputmode="decimal" step="0.01" min="0" ' +
-                            'placeholder="0.00" ' +
-                            'value="' + fieldOrEmpty(entry, "recover") + '">' +
-                        '<span class="won">$</span>' +
-                    '</div>' +
-                '</div>' +
+                positionsHtml(entry) +
 
                 '<div class="field">' +
                     '<label for="f-rebate">리베이트 (USD, 직접 입력)</label>' +
@@ -126,7 +316,7 @@ MinusBook.DayView = (() => {
                             'class="text-input" ' +
                             'placeholder="예: 나스닥 선물 scalping 복구분" ' +
                             'value="' +
-                                (entry && entry.note ? entry.note : "") +
+                                escapeHtml(entry && entry.note ? entry.note : "") +
                             '">' +
                     '</div>' +
                 '</div>' +
@@ -161,11 +351,32 @@ MinusBook.DayView = (() => {
        폼 읽기 / 실시간 계산
        ================================================== */
 
-    function readForm(container) {
+    function readForm(container, validate = false) {
+        const recoverInput = container.querySelector("#f-recover");
+        const rebateInput = container.querySelector("#f-rebate");
+
+        if (validate) {
+            [recoverInput, rebateInput].forEach(input => {
+                const value = input.value.trim();
+
+                if (
+                    !input.validity.valid ||
+                    (value !== "" && !Number.isFinite(Number(value))) ||
+                    !Number.isSafeInteger(
+                        Math.round(Number(value || 0) * 100)
+                    )
+                ) {
+                    input.focus();
+                    throw new Error("복구액 또는 리베이트 금액을 확인해 주세요.");
+                }
+            });
+        }
+
         return {
-            recover: container.querySelector("#f-recover").value,
-            rebate: container.querySelector("#f-rebate").value,
-            note: container.querySelector("#f-note").value
+            recover: recoverInput.value,
+            rebate: rebateInput.value,
+            note: container.querySelector("#f-note").value,
+            positions: readPositionRows(container, validate)
         };
     }
 
@@ -175,6 +386,14 @@ MinusBook.DayView = (() => {
         const loss = Data.getLossAmount();
 
         const result = Calc.day(form);
+
+        const rowCount = container.querySelectorAll(".position-row").length;
+
+        container.querySelector("#position-count").textContent =
+            "진입 " + result.trades + "회" +
+            (rowCount > result.trades
+                ? " · 입력 중 " + (rowCount - result.trades) + "개"
+                : "");
 
         /* 이 날 "직전까지"의 누계 (이 날 저장값은 빼고 계산) */
         const entries = Object.assign({}, Data.getState().entries);
@@ -191,8 +410,20 @@ MinusBook.DayView = (() => {
 
         container.querySelector("#calc-preview").innerHTML =
             '<div class="calc-row">' +
-                '<span>오늘의 복구</span>' +
-                '<span class="value">' +
+                '<span>진입 횟수</span>' +
+                '<span class="value">' + result.trades + '회</span>' +
+            '</div>' +
+            '<div class="calc-row">' +
+                '<span>포지션 손익 합계</span>' +
+                '<span class="value ' +
+                    (result.positionTotal < 0 ? 'loss' : 'profit') + '">' +
+                    Calc.usd(result.positionTotal) +
+                '</span>' +
+            '</div>' +
+            '<div class="calc-row">' +
+                '<span>오늘의 복구 (기존 금액 + 포지션)</span>' +
+                '<span class="value ' +
+                    (result.recover < 0 ? 'loss' : 'profit') + '">' +
                     Calc.usd(result.recover) +
                 '</span>' +
             '</div>' +
@@ -229,7 +460,12 @@ MinusBook.DayView = (() => {
     function isFormEmpty(container) {
         const form = readForm(container);
 
-        return !form.recover && !form.rebate && !form.note.trim();
+        return (
+            Number(form.recover || 0) === 0 &&
+            Number(form.rebate || 0) === 0 &&
+            !form.note.trim() &&
+            container.querySelectorAll(".position-row").length === 0
+        );
     }
 
     /* ==================================================
@@ -237,6 +473,70 @@ MinusBook.DayView = (() => {
        ================================================== */
 
     function bindEvents(container) {
+        const positionList = container.querySelector("#position-list");
+
+        container.querySelector("#add-position")
+            .addEventListener("click", () => {
+                const drafts = readPositionDrafts(container);
+                const previous = drafts[drafts.length - 1];
+
+                drafts.push({
+                    symbol: previous ? previous.symbol : "",
+                    side: previous ? previous.side : "Buy",
+                    pnl: ""
+                });
+
+                renderPositionDrafts(container, drafts);
+
+                const lastRow = container.querySelector(
+                    ".position-row:last-child"
+                );
+
+                lastRow.querySelector(
+                    '[data-position-field="symbol"]'
+                ).focus();
+            });
+
+        positionList.addEventListener("input", () => {
+            refreshCalc(container);
+        });
+
+        positionList.addEventListener("change", () => {
+            refreshCalc(container);
+        });
+
+        positionList.addEventListener("focusin", event => {
+            if (
+                event.target.matches(
+                    '[data-position-field="pnl"]'
+                )
+            ) {
+                event.target.select();
+            }
+        });
+
+        positionList.addEventListener("click", event => {
+            const button = event.target.closest("[data-remove-position]");
+
+            if (!button) {
+                return;
+            }
+
+            const index = Number(button.dataset.removePosition);
+            const drafts = readPositionDrafts(container);
+
+            if (
+                !window.confirm(
+                    (index + 1) + "번 기록을 삭제할까요? 저장하면 반영됩니다."
+                )
+            ) {
+                return;
+            }
+
+            drafts.splice(index, 1);
+            renderPositionDrafts(container, drafts);
+        });
+
         /* 터치 한 번으로 전체 선택 → 바로 새 값 입력 */
         container
             .querySelectorAll('input[type="number"]')
@@ -279,24 +579,60 @@ MinusBook.DayView = (() => {
                 const key = Calc.dateKey(currentDate);
                 const button = container.querySelector("#save-entry");
 
+                let form;
+
+                try {
+                    form = readForm(container, true);
+                } catch (error) {
+                    MinusBook.App.showToast(error.message);
+                    return;
+                }
+
                 if (isFormEmpty(container)) {
                     MinusBook.App.showToast(
-                        "입력된 내용이 없습니다."
+                        "입력된 내용이 없습니다. 전체 삭제는 기록 삭제 버튼을 사용하세요."
                     );
                     return;
                 }
 
-                button.disabled = true;
+                const controls = Array.from(
+                    container.querySelectorAll("input, select, button")
+                ).concat(Array.from(
+                    document.querySelectorAll(".nav-button")
+                ));
+                const previousDisabled = controls.map(control => control.disabled);
+
+                controls.forEach(control => {
+                    control.disabled = true;
+                });
                 button.textContent = "저장 중...";
 
-                const result = await Data.saveEntry(
-                    key,
-                    readForm(container)
-                );
+                try {
+                    const result = await Data.saveEntry(key, form);
 
-                MinusBook.App.afterSync(result);
+                    MinusBook.App.afterSync(result);
 
-                render(container);
+                    if (
+                        button.isConnected &&
+                        Calc.dateKey(currentDate) === key
+                    ) {
+                        render(container);
+                    }
+                } catch (error) {
+                    MinusBook.App.showToast(
+                        "저장 중 오류가 발생했습니다. " + error.message
+                    );
+                } finally {
+                    controls.forEach((control, index) => {
+                        if (control.isConnected) {
+                            control.disabled = previousDisabled[index];
+                        }
+                    });
+
+                    if (button.isConnected) {
+                        button.textContent = "저장";
+                    }
+                }
             });
 
         const deleteButton = container.querySelector("#delete-entry");

@@ -20,7 +20,8 @@ MinusBook.Data = (() => {
     /* 메모리상의 현재 상태 */
     let state = {
         lossAmount: DEFAULT_LOSS,
-        entries: {}
+        entries: {},
+        symbols: []
     };
 
     /* 동기화 상태: ok / pending / error */
@@ -53,11 +54,16 @@ MinusBook.Data = (() => {
     /* ==================================================
        미동기 변경분 (기기에 임시 보관)
        { upserts: {dateKey: entry}, deletes: [dateKey],
-         settings: null | {lossAmount} }
+         settings: null | {lossAmount}, symbols: [symbol] }
        ================================================== */
 
     function emptyPending() {
-        return { upserts: {}, deletes: [], settings: null };
+        return {
+            upserts: {},
+            deletes: [],
+            settings: null,
+            symbols: []
+        };
     }
 
     function getPending() {
@@ -73,7 +79,8 @@ MinusBook.Data = (() => {
             return {
                 upserts: parsed.upserts || {},
                 deletes: parsed.deletes || [],
-                settings: parsed.settings || null
+                settings: parsed.settings || null,
+                symbols: mergeSymbols(parsed.symbols)
             };
         } catch (e) {
             return emptyPending();
@@ -85,7 +92,8 @@ MinusBook.Data = (() => {
             const empty =
                 Object.keys(pending.upserts).length === 0 &&
                 pending.deletes.length === 0 &&
-                pending.settings === null;
+                pending.settings === null &&
+                mergeSymbols(pending.symbols).length === 0;
 
             if (empty) {
                 localStorage.removeItem(PENDING_KEY);
@@ -106,7 +114,8 @@ MinusBook.Data = (() => {
         return (
             Object.keys(p.upserts).length > 0 ||
             p.deletes.length > 0 ||
-            p.settings !== null
+            p.settings !== null ||
+            p.symbols.length > 0
         );
     }
 
@@ -166,7 +175,60 @@ MinusBook.Data = (() => {
        옛 버전 필드(deposit, profit)는 recover로 흡수한다.
        ================================================== */
 
+    function mergeSymbols(...lists) {
+        const symbols = new Set();
+
+        lists.forEach(list => {
+            if (!Array.isArray(list)) {
+                return;
+            }
+
+            list.forEach(value => {
+                if (typeof value !== "string") {
+                    return;
+                }
+
+                const symbol = value.trim().toUpperCase();
+
+                if (symbol) {
+                    symbols.add(symbol);
+                }
+            });
+        });
+
+        return Array.from(symbols).sort((a, b) =>
+            a.localeCompare(b, "ko")
+        );
+    }
+
+    function symbolsFromEntries(entries) {
+        const symbols = [];
+
+        Object.values(entries || {}).forEach(entry => {
+            if (!entry || !Array.isArray(entry.positions)) {
+                return;
+            }
+
+            entry.positions.forEach(position => {
+                symbols.push(position.symbol);
+            });
+        });
+
+        return mergeSymbols(symbols);
+    }
+
+    function getSymbols() {
+        return mergeSymbols(
+            state.symbols,
+            symbolsFromEntries(state.entries)
+        );
+    }
+
     function normalizeEntry(entry) {
+        if (!entry || typeof entry !== "object") {
+            return null;
+        }
+
         const cleaned = {};
 
         let rawRecover = entry.recover;
@@ -182,25 +244,65 @@ MinusBook.Data = (() => {
         const recover = Number(rawRecover);
 
         if (Number.isFinite(recover) && recover !== 0) {
-            cleaned.recover = recover;
+            cleaned.recover = Math.round(recover * 100) / 100;
         }
 
         const rebate = Number(entry.rebate);
 
         if (Number.isFinite(rebate) && rebate !== 0) {
-            cleaned.rebate = rebate;
+            cleaned.rebate = Math.round(rebate * 100) / 100;
+        }
+
+        if (Array.isArray(entry.positions)) {
+            const positions = [];
+
+            entry.positions.forEach(position => {
+                if (!position || typeof position !== "object") {
+                    return;
+                }
+
+                const symbol = String(position.symbol || "")
+                    .trim()
+                    .toUpperCase();
+                const side = position.side;
+                const rawPnl = position.pnl;
+
+                if (
+                    !symbol ||
+                    (side !== "Buy" && side !== "Sell") ||
+                    rawPnl == null ||
+                    String(rawPnl).trim() === ""
+                ) {
+                    return;
+                }
+
+                const pnl = Number(rawPnl);
+
+                if (
+                    !Number.isFinite(pnl) ||
+                    !Number.isSafeInteger(Math.round(pnl * 100))
+                ) {
+                    return;
+                }
+
+                positions.push({
+                    no: positions.length + 1,
+                    symbol: symbol,
+                    side: side,
+                    pnl: Math.round(pnl * 100) / 100
+                });
+            });
+
+            if (positions.length > 0) {
+                cleaned.positions = positions;
+            }
         }
 
         if (entry.note && String(entry.note).trim()) {
             cleaned.note = String(entry.note).trim();
         }
 
-        /* 전부 비어 있으면 null (기록 없음 취급) */
-        if (Object.keys(cleaned).length === 0) {
-            return null;
-        }
-
-        return cleaned;
+        return Object.keys(cleaned).length > 0 ? cleaned : null;
     }
 
     function normalizeState(remote) {
@@ -226,7 +328,11 @@ MinusBook.Data = (() => {
 
         return {
             lossAmount: lossAmount,
-            entries: entries
+            entries: entries,
+            symbols: mergeSymbols(
+                remote.symbols,
+                symbolsFromEntries(entries)
+            )
         };
     }
 
@@ -275,6 +381,12 @@ MinusBook.Data = (() => {
         pending.deletes.forEach(key => {
             delete state.entries[key];
         });
+
+        state.symbols = mergeSymbols(
+            state.symbols,
+            pending.symbols,
+            symbolsFromEntries(state.entries)
+        );
     }
 
     /* ==================================================
@@ -287,6 +399,13 @@ MinusBook.Data = (() => {
 
     function getEntry(key) {
         return state.entries[key] || null;
+    }
+
+    function getSymbols() {
+        return mergeSymbols(
+            state.symbols,
+            symbolsFromEntries(state.entries)
+        );
     }
 
     function getLossAmount() {
@@ -320,6 +439,13 @@ MinusBook.Data = (() => {
                 pending.deletes.push(key);
             }
         }
+
+        const entrySymbols = cleaned && cleaned.positions
+            ? cleaned.positions.map(position => position.symbol)
+            : [];
+
+        state.symbols = mergeSymbols(state.symbols, entrySymbols);
+        pending.symbols = mergeSymbols(pending.symbols, entrySymbols);
 
         setPending(pending);
 
@@ -423,6 +549,12 @@ MinusBook.Data = (() => {
                 delete merged.entries[key];
             });
 
+            merged.symbols = mergeSymbols(
+                merged.symbols,
+                pending.symbols,
+                symbolsFromEntries(merged.entries)
+            );
+
             /* 날짜순 정렬 (보기 좋은 diff를 위해) */
             const sortedEntries = {};
 
@@ -491,6 +623,7 @@ MinusBook.Data = (() => {
         load,
         getState,
         getEntry,
+        getSymbols,
         getLossAmount,
         getSyncState,
         hasPending,
