@@ -862,3 +862,96 @@
 .calc-row .value.loss {
     color: var(--red);
 }
+
+/* ======================================================
+   AI 거래 내역 가져오기
+   ====================================================== */
+
+.trade-import {
+    margin: 16px 0 24px;
+    padding: 16px;
+
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.trade-import summary {
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.trade-import-label {
+    display: block;
+    margin-top: 16px;
+
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.trade-import textarea {
+    display: block;
+    width: 100%;
+    min-height: 180px;
+    margin-top: 8px;
+    padding: 12px;
+
+    color: var(--text);
+    background: var(--surface);
+
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.trade-import textarea:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+}
+
+.trade-import-status {
+    margin: 12px 0 0;
+
+    color: var(--text-2);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.trade-import-preview {
+    max-height: 360px;
+    margin-top: 12px;
+    overflow: auto;
+}
+
+.trade-import-preview table {
+    width: 100%;
+    min-width: 540px;
+    border-collapse: collapse;
+
+    background: var(--surface);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.trade-import-preview th,
+.trade-import-preview td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.trade-import-preview th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-3);
+}

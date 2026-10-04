@@ -413,6 +413,16 @@ MinusBook.DayView = (() => {
 
         bindEvents(container);
         refreshCalc(container);
+
+        MinusBook.TradeImport.mount(container, {
+            date: key,
+
+            readDrafts: () => readPositionDrafts(container),
+
+            applyDrafts: positions => {
+                renderPositionDrafts(container, positions);
+            }
+        });
     }
 
     function fieldOrEmpty(entry, field) {
