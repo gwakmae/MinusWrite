@@ -42,12 +42,98 @@
           "side": "Buy",
           "pnl": -1.93,
           "lots": 0.2
+        },
+        {
+          "no": 6,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -4.63,
+          "lots": 0.2
+        },
+        {
+          "no": 7,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -4.49,
+          "lots": 0.2
+        },
+        {
+          "no": 8,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -4.55,
+          "lots": 0.2
+        },
+        {
+          "no": 9,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": 1.15,
+          "lots": 0.2
+        },
+        {
+          "no": 10,
+          "symbol": "FIXEDVOL80",
+          "side": "Sell",
+          "pnl": 12.39,
+          "lots": 0.5
+        },
+        {
+          "no": 11,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -2.48,
+          "lots": 1
+        },
+        {
+          "no": 12,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -0.44,
+          "lots": 1
+        },
+        {
+          "no": 13,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": -3.24,
+          "lots": 0.3
+        },
+        {
+          "no": 14,
+          "symbol": "FIXEDVOL40",
+          "side": "Buy",
+          "pnl": -17.98,
+          "lots": 0.3
+        },
+        {
+          "no": 15,
+          "symbol": "FIXEDVOL40",
+          "side": "Buy",
+          "pnl": 7.52,
+          "lots": 0.3
+        },
+        {
+          "no": 16,
+          "symbol": "FIXEDVOL80",
+          "side": "Buy",
+          "pnl": 20.95,
+          "lots": 0.2
+        },
+        {
+          "no": 17,
+          "symbol": "FIXEDVOL80",
+          "side": "Buy",
+          "pnl": 11.05,
+          "lots": 0.1
         }
       ]
     }
   },
   "symbols": [
     "FIXEDVOL20",
-    "FIXEDVOL60"
+    "FIXEDVOL40",
+    "FIXEDVOL60",
+    "FIXEDVOL80"
   ]
 }
