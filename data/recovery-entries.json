@@ -130,13 +130,67 @@
       ]
     },
     "2026-10-05": {
-      "rebate": 0.72
+      "rebate": 0.72,
+      "positions": [
+        {
+          "no": 1,
+          "symbol": "EURUSD",
+          "side": "Sell",
+          "pnl": 0.5,
+          "lots": 0.1
+        },
+        {
+          "no": 2,
+          "symbol": "BTCUSD",
+          "side": "Sell",
+          "pnl": 2.57,
+          "lots": 0.05
+        },
+        {
+          "no": 3,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.38,
+          "lots": 0.02
+        },
+        {
+          "no": 4,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -7.79,
+          "lots": 0.01
+        },
+        {
+          "no": 5,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 6.65,
+          "lots": 0.01
+        },
+        {
+          "no": 6,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -2.31,
+          "lots": 0.01
+        },
+        {
+          "no": 7,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 10.06,
+          "lots": 0.02
+        }
+      ]
     }
   },
   "symbols": [
+    "BTCUSD",
+    "EURUSD",
     "FIXEDVOL20",
     "FIXEDVOL40",
     "FIXEDVOL60",
-    "FIXEDVOL80"
+    "FIXEDVOL80",
+    "XAUUSD"
   ]
 }
