@@ -451,6 +451,216 @@
           "side": "Buy",
           "pnl": 6.97,
           "lots": 0.01
+        },
+        {
+          "no": 2,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 0.17,
+          "lots": 0.1
+        },
+        {
+          "no": 3,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -4.25,
+          "lots": 0.01
+        },
+        {
+          "no": 4,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 3.48,
+          "lots": 0.01
+        },
+        {
+          "no": 5,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 1.71,
+          "lots": 0.01
+        },
+        {
+          "no": 6,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.67,
+          "lots": 0.01
+        },
+        {
+          "no": 7,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": 0.9,
+          "lots": 0.1
+        },
+        {
+          "no": 8,
+          "symbol": "FIXEDVOL20",
+          "side": "Sell",
+          "pnl": 0.14,
+          "lots": 0.1
+        },
+        {
+          "no": 9,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 3.44,
+          "lots": 0.2
+        },
+        {
+          "no": 10,
+          "symbol": "EURUSD",
+          "side": "Sell",
+          "pnl": -21,
+          "lots": 0.2
+        },
+        {
+          "no": 11,
+          "symbol": "GER40.R",
+          "side": "Sell",
+          "pnl": -9.99,
+          "lots": 0.2
+        },
+        {
+          "no": 12,
+          "symbol": "GER40.R",
+          "side": "Sell",
+          "pnl": -9.32,
+          "lots": 0.2
+        },
+        {
+          "no": 13,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -4.14,
+          "lots": 0.01
+        },
+        {
+          "no": 14,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 6.97,
+          "lots": 0.01
+        },
+        {
+          "no": 15,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 8.96,
+          "lots": 0.01
+        },
+        {
+          "no": 16,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 20.73,
+          "lots": 0.5
+        },
+        {
+          "no": 17,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -8.98,
+          "lots": 0.01
+        },
+        {
+          "no": 18,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -10.49,
+          "lots": 0.01
+        },
+        {
+          "no": 19,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -4.74,
+          "lots": 0.01
+        },
+        {
+          "no": 20,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 4.51,
+          "lots": 0.01
+        },
+        {
+          "no": 21,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 3.46,
+          "lots": 0.01
+        },
+        {
+          "no": 22,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 3.53,
+          "lots": 0.01
+        },
+        {
+          "no": 23,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 8.16,
+          "lots": 0.01
+        },
+        {
+          "no": 24,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 10.2,
+          "lots": 0.01
+        },
+        {
+          "no": 25,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 2.19,
+          "lots": 0.2
+        },
+        {
+          "no": 26,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -7.53,
+          "lots": 0.2
+        },
+        {
+          "no": 27,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 5.11,
+          "lots": 0.2
+        },
+        {
+          "no": 28,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 4.79,
+          "lots": 0.2
+        },
+        {
+          "no": 29,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": -2.01,
+          "lots": 0.01
+        },
+        {
+          "no": 30,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.14,
+          "lots": 0.01
+        },
+        {
+          "no": 31,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.34,
+          "lots": 0.01
         }
       ]
     }
@@ -462,6 +672,7 @@
     "FIXEDVOL40",
     "FIXEDVOL60",
     "FIXEDVOL80",
+    "GER40.R",
     "NAS100.R",
     "USOUSD",
     "XAUUSD"
