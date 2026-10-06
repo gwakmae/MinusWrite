@@ -443,7 +443,16 @@
       ]
     },
     "2026-10-06": {
-      "rebate": 24.17
+      "rebate": 24.17,
+      "positions": [
+        {
+          "no": 1,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 6.97,
+          "lots": 0.01
+        }
+      ]
     }
   },
   "symbols": [
