@@ -894,7 +894,289 @@
       ]
     },
     "2026-10-08": {
-      "rebate": 8.04
+      "rebate": 8.04,
+      "positions": [
+        {
+          "no": 1,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.46,
+          "lots": 0.01
+        },
+        {
+          "no": 2,
+          "symbol": "BTCUSD",
+          "side": "Buy",
+          "pnl": 1.51,
+          "lots": 0.01
+        },
+        {
+          "no": 3,
+          "symbol": "BTCUSD",
+          "side": "Buy",
+          "pnl": 1.74,
+          "lots": 0.01
+        },
+        {
+          "no": 4,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 6.06,
+          "lots": 0.01
+        },
+        {
+          "no": 5,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 2.55,
+          "lots": 0.1
+        },
+        {
+          "no": 6,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 1.18,
+          "lots": 0.01
+        },
+        {
+          "no": 7,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -2.53,
+          "lots": 0.01
+        },
+        {
+          "no": 8,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -3.56,
+          "lots": 0.1
+        },
+        {
+          "no": 9,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -3.53,
+          "lots": 0.1
+        },
+        {
+          "no": 10,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -3.73,
+          "lots": 0.1
+        },
+        {
+          "no": 11,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 4.11,
+          "lots": 0.01
+        },
+        {
+          "no": 12,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 4.38,
+          "lots": 0.01
+        },
+        {
+          "no": 13,
+          "symbol": "BTCUSD",
+          "side": "Sell",
+          "pnl": 0.57,
+          "lots": 0.01
+        },
+        {
+          "no": 14,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 2.58,
+          "lots": 0.01
+        },
+        {
+          "no": 15,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 1,
+          "lots": 0.1
+        },
+        {
+          "no": 16,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 8.09,
+          "lots": 0.3
+        },
+        {
+          "no": 17,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -21.69,
+          "lots": 0.3
+        },
+        {
+          "no": 18,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -3.4,
+          "lots": 0.01
+        },
+        {
+          "no": 19,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -44.3,
+          "lots": 1
+        },
+        {
+          "no": 20,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": -18.05,
+          "lots": 0.05
+        },
+        {
+          "no": 21,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -1.65,
+          "lots": 0.05
+        },
+        {
+          "no": 22,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 63.22,
+          "lots": 0.05
+        },
+        {
+          "no": 23,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 7.2,
+          "lots": 0.05
+        },
+        {
+          "no": 24,
+          "symbol": "FIXEDVOL80",
+          "side": "Buy",
+          "pnl": -6.56,
+          "lots": 0.1
+        },
+        {
+          "no": 25,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -5.92,
+          "lots": 0.1
+        },
+        {
+          "no": 26,
+          "symbol": "FIXEDVOL80",
+          "side": "Buy",
+          "pnl": -3.88,
+          "lots": 0.1
+        },
+        {
+          "no": 27,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -4.21,
+          "lots": 0.1
+        },
+        {
+          "no": 28,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -1.91,
+          "lots": 0.1
+        },
+        {
+          "no": 29,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -1.86,
+          "lots": 0.1
+        },
+        {
+          "no": 30,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 23.95,
+          "lots": 1
+        },
+        {
+          "no": 31,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 5.23,
+          "lots": 0.2
+        },
+        {
+          "no": 32,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": -37.45,
+          "lots": 0.2
+        },
+        {
+          "no": 33,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": 10.75,
+          "lots": 0.05
+        },
+        {
+          "no": 34,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -11.45,
+          "lots": 0.2
+        },
+        {
+          "no": 35,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": -12.15,
+          "lots": 0.2
+        },
+        {
+          "no": 36,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 19.2,
+          "lots": 1
+        },
+        {
+          "no": 37,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 1.92,
+          "lots": 0.3
+        },
+        {
+          "no": 38,
+          "symbol": "XAUUSD",
+          "side": "Sell",
+          "pnl": -1.32,
+          "lots": 0.02
+        },
+        {
+          "no": 39,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 0.39,
+          "lots": 0.2
+        },
+        {
+          "no": 40,
+          "symbol": "XAUUSD",
+          "side": "Buy",
+          "pnl": 0.6,
+          "lots": 0.02
+        }
+      ]
     }
   },
   "symbols": [
