@@ -1492,12 +1492,57 @@
       ]
     },
     "2026-10-10": {
-      "rebate": 23.4
+      "rebate": 23.4,
+      "positions": [
+        {
+          "no": 1,
+          "symbol": "FIXEDVOL100",
+          "side": "Buy",
+          "pnl": 0.88,
+          "lots": 0.1
+        },
+        {
+          "no": 2,
+          "symbol": "FIXEDVOL100",
+          "side": "Sell",
+          "pnl": 2.55,
+          "lots": 0.1
+        },
+        {
+          "no": 3,
+          "symbol": "FIXEDVOL100",
+          "side": "Sell",
+          "pnl": 2.08,
+          "lots": 0.1
+        },
+        {
+          "no": 4,
+          "symbol": "FIXEDVOL100",
+          "side": "Sell",
+          "pnl": 0.03,
+          "lots": 0.1
+        },
+        {
+          "no": 5,
+          "symbol": "FIXEDVOL100",
+          "side": "Sell",
+          "pnl": 0.29,
+          "lots": 0.1
+        },
+        {
+          "no": 6,
+          "symbol": "FIXEDVOL100",
+          "side": "Sell",
+          "pnl": 0.61,
+          "lots": 0.1
+        }
+      ]
     }
   },
   "symbols": [
     "BTCUSD",
     "EURUSD",
+    "FIXEDVOL100",
     "FIXEDVOL20",
     "FIXEDVOL40",
     "FIXEDVOL60",
