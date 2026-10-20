@@ -1,11 +1,6 @@
 {
   "lossAmount": 544,
-  "entries": {
-    "2026-10-03": {
-      "recover": 36.6,
-      "rebate": 13.61
-    }
-  },
+  "entries": {},
   "symbols": [
     "BTCUSD",
     "EURUSD",
