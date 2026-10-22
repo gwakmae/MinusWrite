@@ -2,6 +2,7 @@
   "lossAmount": 544,
   "entries": {
     "2026-10-22": {
+      "rebate": 0.42,
       "positions": [
         {
           "no": 1,
