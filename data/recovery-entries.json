@@ -27,6 +27,73 @@
         }
       ]
     },
+    "2026-10-23": {
+      "positions": [
+        {
+          "no": 1,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 1.84,
+          "lots": 0.2
+        },
+        {
+          "no": 2,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 1.17,
+          "lots": 0.1
+        },
+        {
+          "no": 3,
+          "symbol": "SKHYUSD",
+          "side": "Sell",
+          "pnl": 2,
+          "lots": 10
+        },
+        {
+          "no": 4,
+          "symbol": "SKHYUSD",
+          "side": "Sell",
+          "pnl": 0.4,
+          "lots": 10
+        },
+        {
+          "no": 5,
+          "symbol": "SKHYUSD",
+          "side": "Sell",
+          "pnl": 0.1,
+          "lots": 10
+        },
+        {
+          "no": 6,
+          "symbol": "SKHYUSD",
+          "side": "Sell",
+          "pnl": -0.2,
+          "lots": 10
+        },
+        {
+          "no": 7,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 0.82,
+          "lots": 0.1
+        },
+        {
+          "no": 8,
+          "symbol": "NAS100.R",
+          "side": "Buy",
+          "pnl": 1.17,
+          "lots": 0.1
+        },
+        {
+          "no": 9,
+          "symbol": "NAS100.R",
+          "side": "Sell",
+          "pnl": 1.24,
+          "lots": 0.2
+        }
+      ]
+    },
     "2026-10-24": {
       "rebate": 0.62
     }
@@ -42,6 +109,7 @@
     "GER40.R",
     "HK50.R",
     "NAS100.R",
+    "SKHYUSD",
     "UKOUSD",
     "USOUSD",
     "XAUUSD"
